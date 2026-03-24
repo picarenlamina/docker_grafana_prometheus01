@@ -15,8 +15,13 @@ services:
       - mysql_data:/var/lib/mysql
     networks:
       - backend
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "app_user", "-papp_pass"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
-  # ⚡ PHP-FPM (Procesamiento de PHP)
+  # ⚡ PHP-FPM
   php:
     image: php:8.2-fpm
     container_name: php
@@ -26,7 +31,7 @@ services:
     networks:
       - backend
 
-  # 🌐 Servidor Web Nginx
+  # 🌐 Nginx
   nginx:
     image: nginx:latest
     container_name: nginx
@@ -41,25 +46,20 @@ services:
     networks:
       - backend
 
-  # 🐬 Exportador de métricas para MySQL
+  # 🐬 Exportador MySQL
   mysqld_exporter:
     image: prom/mysqld-exporter
     container_name: mysqld_exporter
     restart: always
     environment:
-      - DATA_SOURCE_NAME=app_user:app_pass@(mysql:3306)/ 
+      - DATA_SOURCE_NAME=app_user:app_pass@(mysql:3306)/
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     networks:
       - backend
-    # Espera a que MySQL esté listo
-    command: >
-      sh -c "until mysqladmin ping -h mysql -u app_user -papp_pass > /dev/null 2>&1; do
-               echo 'Esperando MySQL...'; sleep 2;
-             done;
-             /bin/mysqld_exporter"
 
-  # ⚡ Exportador de métricas para PHP-FPM
+  # ⚡ Exportador PHP-FPM
   php_fpm_exporter:
     image: hipages/php-fpm_exporter
     container_name: php_fpm_exporter
@@ -71,7 +71,7 @@ services:
     networks:
       - backend
 
-  # 📊 Recolector de métricas Prometheus
+  # 📊 Prometheus
   prometheus:
     image: prom/prometheus
     container_name: prometheus
@@ -86,7 +86,7 @@ services:
     networks:
       - backend
 
-  # 📈 Visualización de datos Grafana
+  # 📈 Grafana
   grafana:
     image: grafana/grafana
     container_name: grafana
