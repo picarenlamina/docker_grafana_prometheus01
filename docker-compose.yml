@@ -41,6 +41,36 @@ services:
     networks:
       - backend
 
+  # 🐬 Exportador de métricas para MySQL
+  mysqld_exporter:
+    image: prom/mysqld-exporter
+    container_name: mysqld_exporter
+    restart: always
+    environment:
+      - DATA_SOURCE_NAME=app_user:app_pass@(mysql:3306)/ 
+    depends_on:
+      - mysql
+    networks:
+      - backend
+    # Espera a que MySQL esté listo
+    command: >
+      sh -c "until mysqladmin ping -h mysql -u app_user -papp_pass > /dev/null 2>&1; do
+               echo 'Esperando MySQL...'; sleep 2;
+             done;
+             /bin/mysqld_exporter"
+
+  # ⚡ Exportador de métricas para PHP-FPM
+  php_fpm_exporter:
+    image: hipages/php-fpm_exporter
+    container_name: php_fpm_exporter
+    restart: always
+    environment:
+      - PHP_FPM_SCRAPE_URI=tcp://php:9000/status
+    depends_on:
+      - php
+    networks:
+      - backend
+
   # 📊 Recolector de métricas Prometheus
   prometheus:
     image: prom/prometheus
@@ -70,30 +100,6 @@ services:
       - ./grafana/provisioning:/etc/grafana/provisioning
     depends_on:
       - prometheus
-    networks:
-      - backend
-
-  # 🐬 Exportador de métricas para MySQL
-  mysqld_exporter:
-    image: prom/mysqld-exporter
-    container_name: mysqld_exporter
-    restart: always
-    environment:
-      - DATA_SOURCE_NAME=app_user:app_pass@(mysql:3306)/
-    depends_on:
-      - mysql
-    networks:
-      - backend
-
-  # ⚡ Exportador de métricas para PHP-FPM
-  php_fpm_exporter:
-    image: hipages/php-fpm_exporter
-    container_name: php_fpm_exporter
-    restart: always
-    environment:
-      - PHP_FPM_SCRAPE_URI=tcp://php:9000/status
-    depends_on:
-      - php
     networks:
       - backend
 
