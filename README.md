@@ -8,3 +8,7 @@ Grafana → http://localhost:3000
 verás subir requests en Prometheus
 verás workers activos en PHP-FPM
 podrás probar saturación
+
+
+👉 esto genera tráfico constante y verás Grafana cobrar vida 😄
+watch -n 1 curl http://localhost:8080/load.php
