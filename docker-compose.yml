@@ -6,6 +6,7 @@ services:
     image: mysql:8.0
     container_name: mysql
     restart: always
+    command: --default-authentication-plugin=mysql_native_password
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: app_db
@@ -28,6 +29,7 @@ services:
     restart: always
     volumes:
       - ./php:/var/www/html
+      - ./php/php-fpm.conf:/usr/local/etc/php-fpm.d/www.conf # para status
     networks:
       - backend
 
@@ -52,7 +54,7 @@ services:
     container_name: mysqld_exporter
     restart: always
     environment:
-      - DATA_SOURCE_NAME=app_user:app_pass@(mysql:3306)/
+      - DATA_SOURCE_NAME=app_user:app_pass@(mysql:3306)/?parseTime=true
     depends_on:
       mysql:
         condition: service_healthy
@@ -80,6 +82,7 @@ services:
       - "9090:9090"
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/rules:/etc/prometheus/rules  # alert rules
     depends_on:
       - mysqld_exporter
       - php_fpm_exporter
@@ -98,6 +101,7 @@ services:
     volumes:
       - grafana_data:/var/lib/grafana
       - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
     depends_on:
       - prometheus
     networks:
