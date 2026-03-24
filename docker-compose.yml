@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # 🗄️ Base de datos MySQL
+  # 🗄️ MySQL
   mysql:
     image: mysql:8.0
     container_name: mysql
@@ -29,7 +29,7 @@ services:
     restart: always
     volumes:
       - ./php:/var/www/html
-      - ./php/php-fpm.conf:/usr/local/etc/php-fpm.d/www.conf # para status
+      - ./php/php-fpm.conf:/usr/local/etc/php-fpm.d/www.conf # habilitar status
     networks:
       - backend
 
@@ -82,7 +82,7 @@ services:
       - "9090:9090"
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-      - ./prometheus/rules:/etc/prometheus/rules  # alert rules
+      - ./prometheus/rules:/etc/prometheus/rules
     depends_on:
       - mysqld_exporter
       - php_fpm_exporter
