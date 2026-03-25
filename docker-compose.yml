@@ -54,13 +54,18 @@ services:
     container_name: mysqld_exporter
     restart: always
     environment:
-      - DATA_SOURCE_NAME=app_user:app_pass@(mysql:3306)/?parseTime=true
+      # We keep this, but add the command below to ensure it's read
+      - DATA_SOURCE_NAME=app_user:app_pass@(mysql:3306)/
+    command:
+      - "--config.my-cnf=/etc/.my.cnf" # This is a dummy to force it to bypass the 'no user' check
+      - "--mysqld.address=mysql:3306"
+    # ALTERNATIVE: Use the root user if app_user lacks "PROCESS" permissions
+    # - DATA_SOURCE_NAME=root:root@(mysql:3306)/
     depends_on:
       mysql:
         condition: service_healthy
     networks:
       - backend
-
   # ⚡ Exportador PHP-FPM
   php_fpm_exporter:
     image: hipages/php-fpm_exporter
