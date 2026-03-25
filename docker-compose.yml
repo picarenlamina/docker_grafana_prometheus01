@@ -48,19 +48,13 @@ services:
     networks:
       - backend
 
-  # 🐬 Exportador MySQL
   mysqld_exporter:
-    image: prom/mysqld-exporter
+    image: prom/mysqld-exporter:v0.15.0 # Using a slightly older, more stable version for env vars
     container_name: mysqld_exporter
     restart: always
     environment:
-      # We keep this, but add the command below to ensure it's read
-      - DATA_SOURCE_NAME=app_user:app_pass@(mysql:3306)/
-    command:
-      - "--config.my-cnf=/etc/.my.cnf" # This is a dummy to force it to bypass the 'no user' check
-      - "--mysqld.address=mysql:3306"
-    # ALTERNATIVE: Use the root user if app_user lacks "PROCESS" permissions
-    # - DATA_SOURCE_NAME=root:root@(mysql:3306)/
+      - DATA_SOURCE_NAME=root:root@(mysql:3306)/
+    # We remove the "command" flags for now to let the entrypoint use the ENV variable
     depends_on:
       mysql:
         condition: service_healthy
