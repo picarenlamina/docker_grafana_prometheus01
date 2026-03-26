@@ -14,7 +14,7 @@
       "format": "percentunit",
       "gridPos": { "h": 4, "w": 12, "x": 0, "y": 0 },
       "id": 1,
-      "title": "PHP-FPM Up",
+      "title": "PHP-FPM Estado (Up)",
       "type": "singlestat",
       "targets": [
         {
@@ -28,12 +28,11 @@
     {
       "cacheTimeout": null,
       "colorValue": false,
-      "colors": ["#73BF69", "#FF9830", "#F2495C"],
       "datasource": "Prometheus",
       "format": "short",
       "gridPos": { "h": 4, "w": 12, "x": 12, "y": 0 },
       "id": 2,
-      "title": "Accepted Connections",
+      "title": "Conexiones Aceptadas / seg",
       "type": "singlestat",
       "targets": [
         {
@@ -53,24 +52,48 @@
       "id": 3,
       "legend": { "show": true, "alignAsTable": true, "avg": true, "current": true },
       "lines": true,
-      "linewidth": 1,
-      "title": "Processes State",
+      "linewidth": 2,
+      "title": "Procesos de PHP-FPM",
       "type": "graph",
       "targets": [
         {
           "expr": "phpfpm_active_processes{job=\"php_fpm\"}",
-          "legendFormat": "Active Processes",
+          "legendFormat": "Activos",
           "refId": "A"
         },
         {
           "expr": "phpfpm_idle_processes{job=\"php_fpm\"}",
-          "legendFormat": "Idle Processes",
+          "legendFormat": "Inactivos (Idle)",
           "refId": "B"
         },
         {
           "expr": "phpfpm_total_processes{job=\"php_fpm\"}",
-          "legendFormat": "Total Processes",
+          "legendFormat": "Total",
           "refId": "C"
+        }
+      ],
+      "xaxis": { "mode": "time", "show": true },
+      "yaxes": [{ "format": "short", "min": 0, "show": true }, { "show": false }]
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "datasource": "Prometheus",
+      "fill": 1,
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 12 },
+      "id": 4,
+      "title": "Cola de Requerimientos (Listen Queue)",
+      "type": "graph",
+      "targets": [
+        {
+          "expr": "phpfpm_listen_queue{job=\"php_fpm\"}",
+          "legendFormat": "Cola Actual",
+          "refId": "A"
+        },
+        {
+          "expr": "phpfpm_max_listen_queue{job=\"php_fpm\"}",
+          "legendFormat": "Máximo en Cola",
+          "refId": "B"
         }
       ],
       "xaxis": { "mode": "time", "show": true },
@@ -79,13 +102,14 @@
   ],
   "schemaVersion": 16,
   "style": "dark",
-  "tags": ["php-fpm", "prometheus"],
+  "tags": ["php-fpm", "php"],
   "templating": {
-    "list": [
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "Prometheus",
-        "hide": 0,
-        "includeAll": false,
-        "label": "Instancia",
+    "list": []
+  },
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "title": "PHP-FPM Corregido",
+  "version": 1
+}
