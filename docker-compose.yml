@@ -54,7 +54,7 @@ services:
     container_name: mysqld_exporter
     restart: always
     volumes:
-      - ./mysqld_exporter.cnf:/etc/mysql/my.cnf:ro
+      - ./mysqld_exporter/mysqld_exporter.cnf:/etc/mysql/my.cnf:ro
     command:
       - "--config.my-cnf=/etc/mysql/my.cnf"
     depends_on:
