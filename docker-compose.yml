@@ -29,7 +29,7 @@ services:
     restart: always
     volumes:
       - ./php:/var/www/html
-      - ./php/php-fpm.conf:/usr/local/etc/php-fpm.d/www.conf # habilitar status
+      - ./php/php-fpm.conf:/usr/local/etc/php-fpm.d/www.conf
     networks:
       - backend
 
@@ -48,20 +48,20 @@ services:
     networks:
       - backend
 
+  # 📊 MySQL Exporter (Corregido)
   mysqld_exporter:
-    mysqld_exporter:
-    image: prom/mysqld-exporter:latest # or v0.16.0
+    image: prom/mysqld-exporter:v0.16.0
     container_name: mysqld_exporter
     restart: always
     environment:
       - DATA_SOURCE_NAME=root:root@(mysql:3306)/
-    # We remove the "command" flags for now to let the entrypoint use the ENV variable
     depends_on:
       mysql:
         condition: service_healthy
     networks:
       - backend
-  # ⚡ Exportador PHP-FPM
+
+  # ⚡ PHP-FPM Exporter
   php_fpm_exporter:
     image: hipages/php-fpm_exporter
     container_name: php_fpm_exporter
