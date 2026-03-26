@@ -24,8 +24,10 @@ services:
 
   # ⚡ PHP-FPM
   php:
-    image: php:8.2-fpm
+    
+    build: .            # <--- Agrega esto (apunta al Dockerfile)
     container_name: php
+ 
     restart: always
     volumes:
       - ./php:/var/www/html
