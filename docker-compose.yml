@@ -53,13 +53,15 @@ services:
     image: prom/mysqld-exporter:v0.16.0
     container_name: mysqld_exporter
     restart: always
-    environment:
-      - DATA_SOURCE_NAME=root:root@(mysql:3306)/
+    volumes:
+      - ./mysqld_exporter.cnf:/etc/mysql/my.cnf:ro
+    command:
+      - "--config.my-cnf=/etc/mysql/my.cnf"
     depends_on:
       mysql:
         condition: service_healthy
     networks:
-      - backend
+      - backendd
 
   # ⚡ PHP-FPM Exporter
   php_fpm_exporter:
