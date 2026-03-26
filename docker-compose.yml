@@ -49,7 +49,8 @@ services:
       - backend
 
   mysqld_exporter:
-    image: prom/mysqld-exporter:v0.15.0 # Using a slightly older, more stable version for env vars
+    mysqld_exporter:
+    image: prom/mysqld-exporter:latest # or v0.16.0
     container_name: mysqld_exporter
     restart: always
     environment:
