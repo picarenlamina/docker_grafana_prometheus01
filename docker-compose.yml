@@ -61,7 +61,7 @@ services:
       mysql:
         condition: service_healthy
     networks:
-      - backendd
+      - backend
 
   # ⚡ PHP-FPM Exporter
   php_fpm_exporter:
